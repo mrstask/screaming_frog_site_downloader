@@ -1,4 +1,6 @@
 import os
+import csv
+
 from datetime import datetime
 
 from settings import project_directory
@@ -18,3 +20,28 @@ def run_spider(ssl: bool, domain: str, output: str, export_tabs: str):
     cmd = f'screamingfrogseospider --crawl {protocol + domain}/ --headless ' \
           f'--save-crawl --output-folder {output} --export-tabs "{export_tabs}"'
     os.system(cmd)
+
+
+def open_file(output: str):
+    res_file = []
+    with open(f'{output}/internal_all.csv') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
+        for row in csv_reader:
+            if line_count == 0:
+                print(f'Column names are {", ".join(row)}')
+                line_count += 1
+            else:
+                res_file.append(row[-1])
+                line_count += 1
+        print(f'Processed {line_count} lines.')
+    return res_file
+
+
+if __name__ == '__main__':
+    domain = ''  # your domain without slashes
+    output = create_directory(domain=domain)
+    run_spider(output=output,
+               domain=domain,
+               ssl=True,
+               export_tabs='Internal:All')

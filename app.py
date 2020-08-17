@@ -1,8 +1,7 @@
 import asyncio
 import time
 
-from result_parser import open_file
-from screaming_frog_handler import create_directory, run_spider
+from screaming_frog_handler import create_directory, run_spider, open_file
 from site_save_handler import start_saving_process
 
 
