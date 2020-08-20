@@ -1,7 +1,7 @@
 import asyncio
 import time
 
-from screaming_frog_handler import create_directory, run_screamingfrog, open_file
+from screaming_frog_handler import create_directory, run_screamingfrog, get_data_from_report
 from site_save_handler import start_saving_process
 
 
@@ -24,7 +24,7 @@ def save_site(output_path: str, domain: str) -> None:
     :param domain: target domain
     :return: None
     """
-    url_list = open_file(output_path)
+    url_list = get_data_from_report(output_path)
     asyncio.run(start_saving_process(url_list, domain))
 
 

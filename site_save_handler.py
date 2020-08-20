@@ -5,7 +5,7 @@ import asyncio
 import aiohttp
 import aiofiles
 
-from screaming_frog_handler import open_file
+from screaming_frog_handler import get_data_from_report
 
 qu = asyncio.Queue()
 
@@ -57,6 +57,6 @@ if __name__ == '__main__':
     output = '' # output path
     domain = '' # site domain
 
-    url_list = open_file(output)
+    url_list = get_data_from_report(output)
     asyncio.run(start_saving_process(url_list, domain))
     print("--- %s seconds ---" % (time.time() - start_time))
