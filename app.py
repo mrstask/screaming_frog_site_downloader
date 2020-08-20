@@ -21,7 +21,7 @@ def save_site(output: str, domain: str):
 
 if __name__ == '__main__':
     start_time = time.time()
-    domain = '' # your domain
+    domain = 'lotosite.ru' # your domain
     output = create_report(domain, True)
 
     save_site(output, domain)

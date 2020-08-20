@@ -3,10 +3,9 @@ import csv
 
 from datetime import datetime
 
-from settings import project_directory
-
 
 def create_directory(domain: str):
+    project_directory = os.getcwd()
     if not os.path.exists(f'{project_directory}/reports/{domain}'):
         os.mkdir(f'{project_directory}/reports/{domain}')
     run_date = str(datetime.now()).replace(' ', '_')

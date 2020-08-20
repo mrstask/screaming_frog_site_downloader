@@ -6,9 +6,7 @@ import aiohttp
 import aiofiles
 
 from screaming_frog_handler import open_file
-from settings import project_directory
 
-project_directory = '/home/dayman/PycharmProjects/ScreamingFrogSpider'
 qu = asyncio.Queue()
 
 
@@ -20,7 +18,7 @@ async def write_binary(response, domain: str):
     else:
         page_directory = '/'.join(response.url.path.split('/')[:-1])
         file_name = response.url.path.split('/')[-1]
-    full_path = f'{project_directory}/sites/{domain}{page_directory}'
+    full_path = f'{os.getcwd()}/sites/{domain}{page_directory}'
     if not os.path.exists(full_path):
         os.makedirs(full_path)
     try:
@@ -36,7 +34,7 @@ async def start_saving_process(urls, domain: str):
     for url in urls:
         await qu.put(url)
     tasks = []
-    for _ in range(1):
+    for _ in range(10):
         task = asyncio.Task(worker(qu, domain))
         tasks.append(task)
 
