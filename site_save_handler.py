@@ -1,17 +1,24 @@
 import os
 import time
 import asyncio
-
+import logging
 import aiohttp
 import aiofiles
 
 from screaming_frog_handler import get_data_from_report
 
 qu = asyncio.Queue()
+logging.basicConfig(level=logging.DEBUG)
 
 
 async def write_binary(response, domain: str):
-    print(f'got {response.url} url')
+    """
+    Writing requested page to a file
+    :param response: response object
+    :param domain: site domain without slashes
+    :return:
+    """
+    logging.DEBUG(f'got {response.url} url')
     if response.content_type == 'text/html':
         page_directory = response.url.path if response.url.path != '/' else ''
         file_name = 'index.html'
@@ -27,14 +34,20 @@ async def write_binary(response, domain: str):
             await f.close()
     except OSError as e:
         print(f'OSError, {e}')
-    return page_directory
 
 
-async def start_saving_process(urls, domain: str):
+async def start_saving_process(urls, num_of_async_tasks: int, domain: str):
+    """
+    Start site saving process via filling que with urls and create tasks
+    :param num_of_async_jobs: number of asynchronous tasks
+    :param urls:
+    :param domain:
+    :return:
+    """
     for url in urls:
         await qu.put(url)
     tasks = []
-    for _ in range(10):
+    for _ in range(num_of_async_tasks):
         task = asyncio.Task(worker(qu, domain))
         tasks.append(task)
 
@@ -42,6 +55,12 @@ async def start_saving_process(urls, domain: str):
 
 
 async def worker(queue, domain: str):
+    """
+    Start worker that make page request and saves response
+    :param queue: queue
+    :param domain: domain without slashes
+    :return:
+    """
     async with aiohttp.ClientSession() as session:
         while queue.qsize() > 0:
             url = await queue.get()
@@ -54,9 +73,9 @@ async def worker(queue, domain: str):
 
 if __name__ == '__main__':
     start_time = time.time()
-    output = '' # output path
-    domain = '' # site domain
+    output = ''  # output path
+    domain = ''  # site domain
 
     url_list = get_data_from_report(output)
-    asyncio.run(start_saving_process(url_list, domain))
+    asyncio.run(start_saving_process(url_list, 10, domain))
     print("--- %s seconds ---" % (time.time() - start_time))

@@ -5,7 +5,6 @@ import shutil
 from screaming_frog_handler import create_directory, run_screamingfrog, get_data_from_report
 
 
-@pytest.mark.skip
 @pytest.mark.parametrize('domain', ['example.com'])
 def test_create_directory(domain: str):
     output = create_directory(domain)
@@ -14,7 +13,7 @@ def test_create_directory(domain: str):
     assert os.path.exists(output)
     os.rmdir(output)
 
-@pytest.mark.skip
+
 @pytest.mark.parametrize('domain, ssl', [('example.com', True), ('example.com', False)])
 def test_run_screamingfrog(domain: str, ssl: bool):
     output = f'{os.getcwd()}/reports/{domain}/{"ssl" if ssl else "none_ssl"}'
