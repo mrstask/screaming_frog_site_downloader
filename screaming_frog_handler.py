@@ -14,7 +14,7 @@ def create_directory(domain: str):
     return output
 
 
-def run_spider(ssl: bool, domain: str, output: str, export_tabs: str):
+def run_screamingfrog(ssl: bool, domain: str, output: str, export_tabs: str):
     protocol = 'https://' if ssl else 'http://'
     cmd = f'screamingfrogseospider --crawl {protocol + domain}/ --headless ' \
           f'--save-crawl --output-folder {output} --export-tabs "{export_tabs}"'
@@ -40,7 +40,4 @@ def open_file(output: str):
 if __name__ == '__main__':
     domain = ''  # your domain without slashes
     output = create_directory(domain=domain)
-    run_spider(output=output,
-               domain=domain,
-               ssl=True,
-               export_tabs='Internal:All')
+    run_screamingfrog(ssl=True, domain=domain, output=output, export_tabs='Internal:All')
