@@ -1,14 +1,11 @@
 import os
 import time
 import asyncio
-import logging
 import aiohttp
 import aiofiles
 
 from screaming_frog_handler import get_data_from_report
-
-qu = asyncio.Queue()
-logging.basicConfig(level=logging.DEBUG)
+from settings import logging
 
 
 async def write_binary(response, domain: str):
@@ -18,7 +15,7 @@ async def write_binary(response, domain: str):
     :param domain: site domain without slashes
     :return:
     """
-    logging.DEBUG(f'got {response.url} url')
+    logging.debug(f'got {response.url} url')
     if response.content_type == 'text/html':
         page_directory = response.url.path if response.url.path != '/' else ''
         file_name = 'index.html'
@@ -33,17 +30,18 @@ async def write_binary(response, domain: str):
             await f.write(await response.read())
             await f.close()
     except OSError as e:
-        print(f'OSError, {e}')
+        logging.error(f'OSError, {e}')
 
 
 async def start_saving_process(urls, num_of_async_tasks: int, domain: str):
     """
     Start site saving process via filling que with urls and create tasks
-    :param num_of_async_jobs: number of asynchronous tasks
+    :param num_of_async_tasks: number of asynchronous tasks
     :param urls:
     :param domain:
     :return:
     """
+    qu = asyncio.Queue()
     for url in urls:
         await qu.put(url)
     tasks = []
@@ -68,7 +66,7 @@ async def worker(queue, domain: str):
                 async with session.get(url, allow_redirects=False, verify_ssl=False) as response:
                     await write_binary(response, domain)
             except Exception as e:
-                print('session get exception for url', url, type(e), e)
+                logging.error('session get exception for url', url, type(e), e)
 
 
 if __name__ == '__main__':

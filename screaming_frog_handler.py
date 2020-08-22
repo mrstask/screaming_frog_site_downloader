@@ -2,6 +2,7 @@ import os
 import csv
 
 from datetime import datetime
+from settings import logging
 
 
 def create_directory(domain: str) -> str:
@@ -46,10 +47,10 @@ def get_data_from_report(report_path: str) -> list:
         line_count = 0
         for row in csv_reader:
             if line_count == 0:
-                print(f'Column names are {", ".join(row)}')
+                logging.debug(f'Column names are {", ".join(row)}')
                 line_count += 1
             else:
                 res_file.append(row[-1])
                 line_count += 1
-        print(f'Processed {line_count} lines.')
+        logging.debug(f'Processed {line_count} lines.')
     return res_file
