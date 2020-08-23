@@ -1,10 +1,8 @@
 import os
-import time
 import asyncio
 import aiohttp
 import aiofiles
 
-from screaming_frog_handler import get_data_from_report
 from settings import logging
 
 
@@ -37,7 +35,7 @@ async def start_saving_process(urls, num_of_async_tasks: int, domain: str):
     """
     Start site saving process via filling que with urls and create tasks
     :param num_of_async_tasks: number of asynchronous tasks
-    :param urls:
+    :param urls: list of urls to crawl
     :param domain:
     :return:
     """
@@ -67,13 +65,3 @@ async def worker(queue, domain: str):
                     await write_binary(response, domain)
             except Exception as e:
                 logging.error('session get exception for url', url, type(e), e)
-
-
-if __name__ == '__main__':
-    start_time = time.time()
-    output = ''  # output path
-    domain = ''  # site domain
-
-    url_list = get_data_from_report(output)
-    asyncio.run(start_saving_process(url_list, 10, domain))
-    print("--- %s seconds ---" % (time.time() - start_time))
