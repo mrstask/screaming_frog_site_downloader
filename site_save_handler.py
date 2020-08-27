@@ -2,6 +2,7 @@ import os
 import asyncio
 import aiohttp
 import aiofiles
+from aiohttp import ClientOSError, ClientConnectorError
 
 from settings import logging
 
@@ -60,8 +61,16 @@ async def worker(queue, domain: str):
     async with aiohttp.ClientSession() as session:
         while queue.qsize() > 0:
             url = await queue.get()
-            try:
-                async with session.get(url, allow_redirects=False, verify_ssl=False) as response:
-                    await write_binary(response, domain)
-            except Exception as e:
-                logging.error('session get exception for url', url, type(e), e)
+            i = 0
+            while i < 10:
+                try:
+                    async with session.get(url, allow_redirects=True, verify_ssl=False) as response:
+                        await write_binary(response, domain)
+                        break
+                except (ClientOSError, ClientConnectorError) as e:
+                    logging.error(f'session get {type(e), e} for url', url)
+                    i += 1
+                    continue
+                except Exception as e:
+                    logging.error('session get exception for url', url, type(e), e)
+                    break

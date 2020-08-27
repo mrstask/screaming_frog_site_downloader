@@ -25,12 +25,12 @@ def save_site(output_path: str, domain: str, num_of_tasks: int) -> None:
     :return: None
     """
     url_list = get_data_from_report(output_path)
-    asyncio.run(start_saving_process(url_list=url_list, num_of_tasks=num_of_tasks, domain=domain))
+    asyncio.run(start_saving_process(url_list, num_of_tasks, domain=domain))
 
 
 if __name__ == '__main__':
     start_time = time.time()
-    domain = 'lotosite.ru' # your domain
+    domain = 'lotosite.ru'  # your domain
     output = generate_screamingfrog_report(domain, True)
 
     save_site(output, domain, 10)
